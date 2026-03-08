@@ -1,6 +1,8 @@
 # intro.md — agent context
 
-**For agents:** You have no prior context. Read this file first, then the WIP doc path the user gives. The WIP doc lists read order (README, system-environment if needed, other context). Follow that order. **`agent/index.md`** lists every doc with a short description of what's in it—use it to choose what to read instead of opening the file structure to guess (saves steps and tokens).
+**For agents:** You have no prior context.
+
+**Read order:** (1) This file. (2) If the user gave a WIP doc path, open it next—it gives the exact read order (e.g. current-state, README, system-environment if needed). Follow that. (3) If no WIP path, read **agent/current-state.md** for project overview, then **agent/index.md** to choose other docs by description (don’t scan the file tree).
 
 **Humans:** Give agents this intro and a WIP doc path so they can load context efficiently.
 
@@ -10,6 +12,7 @@
 
 | Need | Source |
 |------|--------|
+| Whole-project overview (for agents) | **`agent/current-state.md`**. What the project is, how it's organized, where to go next (intro, index, modules). Read first when you need project-level context. |
 | WIP state (Planned / In progress / Completed) | WIP doc. User gives path or "the WIP doc"; search `**/context/wip-*.md` if needed. Do not assume; read the doc. |
 | Module intro, rules, and state (for agents) | **`context/current-state.md`** in the module folder. Start here for this module: what the code is and does, how it fits in the project, rules (best practices, what not to do), then wiring/code/working/not/next. You don't need the whole-project description—just this file for this module. |
 | Module overview, how to run (for humans) | **README** in the module folder. Human-oriented; open for narrative and run steps when needed. |
@@ -19,9 +22,8 @@
 
 ## How to read module docs
 
-- **This module (agents):** Read **`context/current-state.md`** first. It's the agent entry for this module: what the code is and does, how it fits in the project, rules for working here (best practices, what not to do), then wiring, code, working, not working, next/refs. You don't need the whole project—just this file for this module. Do not infer state from the WIP doc alone.
-- **Overview and how to run:** **README** in the module folder is for humans; use it when you need narrative or run steps.
-- **Open other `context/` files** (WIP doc, wiring, test-summary, API spec, config notes, etc.) as the WIP doc or task requires.
+- **Agent entry for this module:** **`context/current-state.md`** first (what the code is, rules, wiring/code/working/not/next). Do not infer state from the WIP doc alone.
+- **Overview and how to run:** **README** in the module folder. Other **context/** files (wiring, test-summary, API spec, etc.) as the WIP doc or task requires.
 
 ## Execution environment
 
@@ -29,9 +31,9 @@
 
 ## Paths
 
-- **Repo root** = project root.
-- **`agent/`** — Shared agent docs only: intro.md, new.md, index.md, system-environment.md, cleanup.md, setup.md. No module-specific content. **index.md** = paths + descriptions of what's in each file (use it instead of scanning the tree to decide what to open).
-- **Modules** — One folder per module at repo root (e.g. `my-service/`, `cli-tool/`). Each has README, **context/** (WIP docs, notes), and code. New-module layout: **`agent/new.md`**.
+- **Repo root** = project root. Contains **README** (for humans). Project-level agent context is **agent/current-state.md**.
+- **`agent/`** — Shared agent docs: current-state.md, intro.md, new.md, cleanup.md, setup.md, index.md, system-environment.md. No module-specific content. **index.md** = paths + one-line descriptions (use it to choose what to open instead of scanning the tree).
+- **Modules** — One folder per module (at repo root or nested, e.g. `my-service/`, `parent/sub-module/`). Each has README, **context/** (WIP docs, notes), and code. Same format at every level. New-module layout: **`agent/new.md`**.
 - **New project init:** **`agent/setup.md`**.
 
 ## Rules

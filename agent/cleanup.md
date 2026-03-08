@@ -1,6 +1,6 @@
 # cleanup.md — doc sync pass
 
-**For agents:** When the user says "clean up according to cleanup.md", run steps 1–3 below. Goal: a new agent can pick up from intro + WIP doc + README with no missing context.
+**For agents:** When the user says "clean up according to cleanup.md", run **steps 1–3** below. Goal: module docs and WIP state are accurate; index and system-environment updated if needed; changes pushed to the WIP branch so a fresh agent can continue from intro + WIP doc.
 
 **Humans:** Ask the agent to "clean up according to cleanup.md" at end of session so docs are synced and pushed to the WIP branch.
 

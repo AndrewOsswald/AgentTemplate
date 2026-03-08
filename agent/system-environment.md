@@ -1,6 +1,6 @@
 # system-environment.md — run environment (this project)
 
-**For agents:** This file describes the **run environment** for this project—e.g. laptop, server, container, or embedded host. Use it when the WIP involves host, hardware, interfaces, or config. Do not guess; read the values here. *(Regenerate via `agent/setup.md` when moving to a new machine or run target.)*
+**For agents:** **When to read:** WIP involves host, hardware, interfaces, or config. This file has the run environment (OS, hardware, pins, interfaces)—do not guess; read the values here. *(Regenerate via **agent/setup.md** when moving to a new machine or run target.)*
 
 ## Critical constraints (don't violate)
 

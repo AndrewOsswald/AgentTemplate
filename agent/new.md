@@ -1,6 +1,8 @@
 # new.md — start a new WIP or create a new module
 
-**For agents:** Use when the user asks to start a new WIP or create a new module. Follow the workflow that matches (new module = new folder; change to existing module = new WIP doc). General context: `agent/intro.md`.
+**For agents:** Use when the user asks to start a new WIP or create a new module.
+
+**Two workflows:** (1) **New module** = new folder (README, context/, code). (2) **New WIP** = new `context/wip-<slug>.md` in an existing module. Pick the one that matches. General context: **agent/intro.md**.
 
 **Humans:** Point an agent at intro and this file (e.g. "read intro and new.md, then create a new module for X").
 
@@ -19,7 +21,8 @@ Both are WIPs; the difference is whether the module already exists. Pick the wor
 
 ## Documentation layout: one folder per module
 
-- **Every module has its own folder** at repo root (e.g. `my-service/`, `cli-tool/`, `hardware-test/`). There is **no** module-specific context stored inside `agent/`; all module context lives in that module's folder.
+- **Every module has its own folder** (at repo root or nested inside another module, e.g. `my-service/`, `parent/sub-module/`). There is **no** module-specific context stored inside `agent/`; all module context lives in that module's folder.
+- **Modules can be nested:** a module folder can contain submodule folders; each level uses the same format (README, context/, code).
 - Each module folder contains: **README.md** (main module doc), **context/** (WIP docs and other context), and the **code** for that module (scripts, drivers, etc.).
 - **Audience:** All docs are written for **both humans and AI**. Use clear structure and headings for parsing, explicit file paths and state for context, and readable prose for humans.
 
@@ -32,7 +35,7 @@ This format ensures that when the user gives an agent **intro + WIP doc path**, 
 ### Folder layout
 
 ```
-<module-folder>/           e.g. my-feature/, api-server/, or cli-tool/
+<module-folder>/           e.g. my-feature/, api-server/, or parent/sub-module/
   README.md                main module doc (project, best practices, overview, current state, how to run, refs)
   context/
     current-state.md      agent entry for this module: intro, how it fits, rules, then state (wiring, code, working, not, next/refs)
@@ -101,7 +104,7 @@ Optional for complex WIPs: **## Context for next session** — Summary for hando
 
 ## New module template (structure)
 
-When starting a **new module**, create a folder at repo root and use the format above. You can copy from an existing module (e.g. `gpio-led-blink/`) and rename. Checklist:
+When starting a **new module**, create a folder (at repo root or inside an existing module for a submodule) and use the format above. You can copy from an existing module (e.g. `gpio-led-blink/`) and rename. Checklist:
 
 **context/current-state.md:** Opening (agent entry for this module) → What this module is → How it fits in the project → Rules for working on this module → Wiring or Config/env (if applicable) → Code → Working → Not working / limitations → Next / refs. Agent-only; update as module changes.
 
@@ -135,7 +138,7 @@ When the WIP is to **create a new module** (module doesn't exist yet), follow th
 
 1. **Choose a slug** — Short, lowercase, hyphenated (e.g. `my-feature`, `api-server`). The WIP file will be `wip-<slug>.md` and the branch `main--<slug>`.
 
-2. **Create the module folder** at repo root (e.g. `my_feature/`). Optionally copy an existing module folder and rename it and its contents.
+2. **Create the module folder** (at repo root or inside another module for a submodule, e.g. `my_feature/` or `parent/sub_feature/`). Optionally copy an existing module folder and rename it and its contents.
 
 3. **Write README.md** — For humans. Title; ## Project; ## Best practices; ## Overview; how to wire/run; ## Deeper docs (in context/) including current-state.md; ## Related WIP doc(s). No "Current state" section in README; that goes in context/current-state.md.
 

@@ -1,6 +1,6 @@
 # setup.md — initialize a new project
 
-**For agents:** Use when the user says to set yourself up after copying `agent/` into a new project. Main action: regenerate **`agent/system-environment.md`** for this run environment (e.g. laptop, server, container, or embedded host). Optionally update **`agent/index.md`**.
+**For agents:** Use when the user says to set yourself up after copying `agent/` into a new project. Main actions: regenerate **`agent/system-environment.md`** for this run environment; remove the example module (if present); **update all references to the project being a template** so that after setup the project is described as the user's project, not a template.
 
 **Humans:** After copying the agent folder to a new project, tell the agent to read setup.md and set itself up.
 
@@ -33,7 +33,7 @@ So it is safe for your codebase. Two caveats: (1) If you have a **real** module 
 
 ## What to do when initializing a new project
 
-You've copied this agent folder into a new project folder. Do **steps 1–4 in order**. (If the project already has real modules and no template example, step 1 is a no-op—see "Running setup on an existing project" above.)
+You've copied this agent folder into a new project folder. Do **steps 1–5 in order**. After setup, **the project is no longer a template**—it is the user's project. Step 4 ensures every doc that referred to "template" is updated to reflect that. (If the project already has real modules and no template example, step 1 is a no-op—see "Running setup on an existing project" above.)
 
 ### 1. Remove the example module
 
@@ -66,7 +66,19 @@ That file currently describes a different machine. Regenerate it for **this** ma
 
 If you added or removed docs or module folders (other than the example module already removed in step 1), add or remove rows in `agent/index.md` with path and a one-line description. The index is more useful than the raw file structure because descriptions let an agent decide what to open without reading multiple files first.
 
-### 4. You're done
+### 4. Update references to the project being a template
 
-- **Don't** change intro.md, new.md, cleanup.md, or the template unless the new project has different rules.
-- The user can now start a chat with intro + a WIP doc, or use new.md to start a WIP/module, or cleanup.md to clean up. system-environment.md now correctly describes this project's machine.
+After setup, **the project is no longer a template**—it is the user's project. Update every place that still describes the repo as a template so agents and humans see this as the project, not "the template."
+
+**Files to update:**
+
+- **README.md** — Change the title and any prose that says "template" or "this template." Describe the repo as this project (agent context for this project, what's in it, how to use it). Remove or reword "How to use this template" (e.g. "How to use this repo" or fold into overview). Remove instructions that only apply to someone who just copied the template (e.g. "Copy or clone this repo") if they no longer apply; or keep a short "This project was initialized from the agent context template" if useful.
+- **agent/current-state.md** — In "What this project is," replace the template description with a short description of **this** project (what it is, what it's for). Update the table row for README (e.g. "What the project is, what's in agent/, how to use it"). Remove the sentence about "This template includes one example-module/" (example is gone). Keep the rest (where to go next, rules) or adapt to this project.
+- **agent/index.md** — In the Project root table, the README row should say something like "For humans. What the project is, what's in agent/, how to use it" (not "What the template is"). Remove any other template-only wording that remains after step 1.
+
+Do not change intro.md, new.md, or cleanup.md unless the user wants different rules. The goal is that no doc still says "this is a template" or "use this template" after setup.
+
+### 5. You're done
+
+- The project is now the user's project, not a template. Docs refer to it as such.
+- The user can start a chat with intro + a WIP doc, or use new.md to start a WIP/module, or cleanup.md to clean up. system-environment.md describes this project's machine.

@@ -30,6 +30,7 @@ This architecture solves both problems by making the documentation structure its
 - **Clear patterns up front improve consistency and reliability** (Hong et al., 2024). The agent behavioral file (`agent/intro.md`) establishes the process and rules at the start of every session.
 - **What explains well for an agent explains well for a human.** No separate agent/human documentation — one set of docs serves both audiences with clear, explicit natural language.
 - **Assumptions are where agents make mistakes.** A simpler model with complete information will outperform a powerful model that has to guess. When something is unclear, the agent should ask — a question is always cheaper than a wrong change.
+- **Setup is iterative, not exhaustive.** Good documentation comes from working conversations over time — not from a single interrogation session. The skeleton gets created first; details get filled in as the developer explains things through actual work. See `agent/setup.md`.
 
 ---
 
@@ -94,7 +95,7 @@ The agent does NOT delete plan files or context files (that's the user's decisio
 
 **Which file gets which information:**
 - Plan file → task progress, failed attempts, decisions, temporary state; optional **Verification** (tests to run, paths under `meta/` for output)
-- Context files (current-state.md, environment.md) → what the system actually looks like right now
+- Context files (current-state.md) → what the system actually looks like right now
 - README → what the module is and what's in it (stable overview)
 - Index (codebase) → file structure and relationships
 - Guides → how to set up or operate things
@@ -160,9 +161,9 @@ The `agent/` folder exists at the project root only. Sub-modules do not have the
 |---|---|
 | `intro.md` | Behavioral core — persona, rules, decision loop. Loaded every session. |
 | `architecture.md` | This file — explains why things are structured this way. Reference only, not in the critical path. |
-| `new.md` | How to create modules. Contains the three templates with defaults, optionals, and custom types. |
+| `new.md` | How to create modules. Contains the templates with defaults, optionals, and custom types. |
 | `cleanup.md` | End-of-session review process. |
-| `setup.md` | Bootstrap this architecture into a new project. |
+| `setup.md` | Bootstrap this architecture into a new project. Iterative — covers first session and beyond. |
 | `context-refinement.md` | Documentation audit workflow (Planner question bank + parallel evaluators). |
 | `thoughts.md` | Agent observations journal. |
 | `system-environment.md` | Dev machine environment reference. |
@@ -176,7 +177,7 @@ The behavioral hierarchy:
 
 ## Module templates
 
-Three base templates that serve as building blocks. Most real modules combine elements. The README at the module level explains which pieces are in use and why.
+Two base templates that serve as building blocks. Most real modules combine elements. The README at the module level explains which pieces are in use and why.
 
 ### Documentation template
 For modules that are mostly prose, guides, or reference material. The documentation IS the content — there's no separate system to track.
@@ -194,16 +195,8 @@ For code projects. Code files don't contain enough info about design intentions 
 - README tree continues into code subdirectories
 - Optional: `context/decisions.md` (ADRs), `guidelines.md`
 
-### Device template
-For physical or virtual systems. The agent needs to know what's installed, running, and how to connect.
-
-- Default: README.md + `context/` folder with `environment.md`, plan files
-- `environment.md` IS the current state — no separate file needed
-- Guides live in the module folder alongside the README
-- Optional: `context/decisions.md`, `context/changelog.md`, `guidelines.md`
-
 ### Mixing and custom types
-Templates are building blocks. A web app on a server uses codebase + device. Infrastructure-as-code is a codebase. Modules can add any custom context files they need — the README documents what's there and why.
+Templates are building blocks. Infrastructure-as-code is a codebase. A monorepo is multiple codebase modules nested. Modules can add any custom context files they need — the README documents what's there and why.
 
 **Direct file references:** All context files, READMEs, plan files, and guides reference other files using exact relative paths — not "the environment file" but `context/environment.md`. The agent should always know exactly where a file is without searching.
 
@@ -221,7 +214,6 @@ Each type of file answers a different question. Together they give the agent com
 | **Plan file** | "What are we working on and how far along?" | Continuously during a task — planned → in progress → done |
 | **Module `meta/`** (optional) | "What raw test/build output or probe scripts exist for this module?" | During Act/Review when running checks; prune or overwrite as needed — summarize results in plan Notes and context |
 | **Current-state** (codebase) | "What does the system look like right now?" | Immediately when state changes — even if broken |
-| **Environment** (device) | "What's installed, running, and how to connect?" | Immediately when device state changes |
 | **Index** (codebase) | "What files exist and how do they relate?" | When file structure or relationships change |
 | **Guides** | "How do I set up or operate this?" | When procedures change — steps that failed, deviations, new steps |
 | **Decisions** (optional) | "Why is it this way? What was tried and rejected?" | When a significant decision is made during any task |
@@ -281,8 +273,7 @@ At any point, if a session ends, the documentation reflects reality:
 
 The `context/` folder exists when there's meta-information about a thing that's separate from the thing itself:
 
-- A **codebase** has code + context about the code (index, deployment state, plans)
-- A **device** has guides + context about the device (environment, plans)
+- A **codebase** has code + context about the code (index, current state, plans)
 - A **documentation** module's content IS its meta-information — no context/ folder needed
 
 ---

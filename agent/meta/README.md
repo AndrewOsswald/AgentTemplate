@@ -11,5 +11,5 @@ Project-level meta artifacts — behavioral notes, audit outputs, and dated hand
 ## What does NOT go here
 
 - Active plans → `context/plan-*.md` in the relevant module
-- Current system state → `context/current-state.md` or `context/environment.md` in the relevant module
+- Current system state → `context/current-state.md` in the relevant module
 - Code or scripts → the module's `src/` or `meta/` folder

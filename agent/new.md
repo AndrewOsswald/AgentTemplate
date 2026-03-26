@@ -1,6 +1,6 @@
 # new.md — creating modules and plan files
 
-Use this file when creating a new module or starting a new plan file in an existing module. This file defines the three module templates, their context file types, and how to set them up.
+Use this file when creating a new module or starting a new plan file in an existing module. This file defines the module templates, their context file types, and how to set them up.
 
 For background on why the templates are structured this way, see `agent/architecture.md`.
 
@@ -16,7 +16,7 @@ Agents are steered to navigate **depth-first on READMEs** (see `agent/intro.md`)
 
 ## Module templates
 
-There are three base templates. They are **building blocks, not rigid categories** — most real modules combine elements. Pick the pieces that fit your module and explain the setup in the module's README. Be creative to match needs; the README at the module level documents which template pieces are in use and why.
+There are two base templates. They are **building blocks, not rigid categories** — most real modules combine elements. Pick the pieces that fit your module and explain the setup in the module's README. Be creative to match needs; the README at the module level documents which template pieces are in use and why.
 
 ### Documentation template
 
@@ -45,7 +45,7 @@ module/
 
 ### Codebase template
 
-Use when the module is a code project. Code files don't contain enough info about design intentions — the context files bridge that gap.
+Use when the module is a code project — an API, a frontend app, a library, a service, infrastructure-as-code, or anything where code files are the primary artifact. Code files don't contain enough info about design intentions — the context files bridge that gap.
 
 **Default structure:**
 ```
@@ -53,7 +53,7 @@ module/
 ├── README.md              # project overview, architecture, how to run, guidelines
 ├── context/
 │   ├── index.md           # graph-based code map
-│   ├── current-state.md   # deployment status, known issues, active branches
+│   ├── current-state.md   # what's working, what's broken, known issues
 │   └── plan-*.md          # active work
 ├── meta/                  # optional — local test scripts, junit/log captures, smoke-run output
 ├── src/                   # (or whatever the code structure is)
@@ -81,7 +81,7 @@ Example:
 
 - `README.md` — Project overview, architecture, how to run, guidelines
 - `context/index.md` — This file. Graph-based map of the codebase.
-- `context/current-state.md` — Deployment status, known issues, active branches
+- `context/current-state.md` — What's working, known issues, active branches
 - `context/plan-auth-refactor.md` — Active plan for refactoring the auth module
 - `src/server.ts` — Express server entry point, configures middleware and routes
 - `src/auth/middleware.ts` — JWT authentication middleware, validates tokens on protected routes
@@ -99,10 +99,10 @@ Example:
 ```
 
 `context/current-state.md` — What the system looks like right now. Separate from README because this changes frequently:
-- What's deployed and where
 - What's working, what's broken, known issues
 - Active branches and what they're for
 - Recent significant changes that affect how to work with the code
+- Deployment or runtime status (if applicable)
 
 `context/plan-*.md` — One per active task. Self-contained. The user decides when to delete plan files.
 
@@ -116,47 +116,9 @@ Example:
 
 ---
 
-### Device template
-
-Use when the module is a physical or virtual system (server, Raspberry Pi, VM, router, etc.). The agent needs to know what's currently installed, running, and how to connect.
-
-**Default structure:**
-```
-module/
-├── README.md              # what this device is, guide list, overview, guidelines
-├── context/
-│   ├── environment.md     # the device's current state
-│   └── plan-*.md          # active work
-├── meta/                  # optional — short probe scripts, saved SSH check output, test curls
-├── setup-guide.md         # how to set up from scratch
-└── other guides...        # operational guides
-```
-
-**Default context files:**
-
-`context/environment.md` — The core artifact for a device module. This IS the current state — no separate current-state file needed. Contains:
-- Connection info (SSH user, hostname, IP, port)
-- OS, kernel, hardware
-- What's installed (Docker, services, tools)
-- What's running (containers, services, cron jobs — with enough detail to recreate)
-- Network configuration (interfaces, ports)
-- Storage and backup paths
-- Update this file every time the device's state changes — installations, config changes, new services, removed services, even half-installed things that failed
-
-`context/plan-*.md` — One per active task. Self-contained. The user decides when to delete plan files.
-
-**Guides** live in the module folder alongside the README. They are step-by-step instructions for setup and operations. Update guides when procedures change — steps that failed, deviations, new steps.
-
-**Optional context files** (add in `context/` when needed):
-- `context/decisions.md` — Why things are configured the way they are. Rejected approaches.
-- `context/changelog.md` — Chronological record of significant changes. Short entries. This fills the gap that git covers for code — git tracks documentation changes but not actual system state changes.
-- `guidelines.md` (at module root) — Dedicated behavioral guidelines when extensive enough to clutter the README.
-
----
-
 ## Custom context types
 
-The templates define defaults and recommended optional types, but modules can add any custom context files they need. If a module needs something not covered by the templates (e.g. `migrations.md` for database schema tracking, `dependencies.md` for cross-module relationships, `api-reference.md` for external integrations), add the file and explain it in the README.
+The templates define defaults and recommended optional types, but modules can add any custom context files they need. If a module needs something not covered by the templates (e.g. `migrations.md` for database schema tracking, `dependencies.md` for cross-module relationships, `api-reference.md` for external integrations, `environment.md` for runtime/deployment target details), add the file and explain it in the README.
 
 The principles stay the same for any context file: concise, compartmentalized, non-redundant, and documented in the module's README so the agent discovers it through normal navigation.
 
@@ -165,7 +127,7 @@ The principles stay the same for any context file: concise, compartmentalized, n
 ## Mixing templates
 
 Most real modules combine elements from multiple templates. Examples:
-- A web app deployed on a server → codebase template (index, current-state) + device template (environment)
+- A web app with infrastructure config → codebase template + optional `environment.md` for deployment targets
 - Infrastructure-as-code (Terraform, Docker configs) → codebase template
 - A documentation site with a build step → documentation template + some codebase elements (index for the build tooling)
 
@@ -179,7 +141,6 @@ The README at the module level explains which pieces are in use. Don't force a m
 
 The `context/` folder exists when there's "meta" information about a thing that's separate from the thing itself:
 - A codebase has code + context about the code
-- A device has guides + context about the device
 - A documentation module's content IS its meta information — no context/ folder needed
 
 ---
@@ -190,13 +151,13 @@ Plan files track active work. When work is complete, the permanent record lives 
 
 **Location:**
 - Documentation template: `plan-*.md` at module root
-- Codebase / Device template: `context/plan-*.md`
+- Codebase template: `context/plan-*.md`
 
 **Naming:** `plan-<slug>.md` where slug is short, lowercase, hyphenated (e.g. `plan-auth-refactor.md`, `plan-deploy-staging.md`).
 
 **Multiple plans per module:** allowed. Each is self-contained with its own slug.
 
-**Tests and verification:** A plan may include **Review** work — unit tests, integration tests, `build`, `curl` checks, or probes. Say **what to run** and **where evidence goes** (e.g. "save stdout to `meta/last-smoke.txt`"). Small scripts and log captures belong in the module's **`meta/`** folder, not mixed into `context/`; put pass/fail conclusions and impact on system state in **Notes** and in **`context/current-state.md`** or **`environment.md`**.
+**Tests and verification:** A plan may include **Review** work — unit tests, integration tests, `build`, `curl` checks, or probes. Say **what to run** and **where evidence goes** (e.g. "save stdout to `meta/last-smoke.txt`"). Small scripts and log captures belong in the module's **`meta/`** folder, not mixed into `context/`; put pass/fail conclusions and impact on system state in **Notes** and in **`context/current-state.md`**.
 
 **Standard structure:**
 ```markdown
@@ -208,7 +169,7 @@ this file and continue the work.
 ## Context references
 
 - Module: `path/to/module/`
-- Read: `context/current-state.md` (deployment state), `context/index.md` (code map)
+- Read: `context/current-state.md` (current state), `context/index.md` (code map)
 - Guidelines: `guidelines.md` (if one exists for this module)
 
 ## Background

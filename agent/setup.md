@@ -99,8 +99,30 @@ Create the following:
 
 **Per module:**
 - `README.md` — what this module is, what's in it, which template pieces apply. Sections for guidelines and active work can be empty placeholders.
-- `context/index.md` — if it's a codebase module. Populate nodes from the actual file listing (file name + short description based on what you can infer). Mark files you're unsure about. Edges can be minimal — they'll be filled in as the developer explains relationships.
+- `context/index.md` — if it's a codebase module. **Before generating this file, explain the concept to the user and ask how they want it set up.** See the explanation and conversation guide below.
 - `context/current-state.md` — if it's a codebase module. Headers only (Deployment, What's Working, Known Issues, Active Branches). Don't invent content.
+
+#### Explaining `context/index.md` to the user
+
+The index is one of the most important files in the architecture, but the concept isn't obvious. Before generating any indexes, explain it to the user in plain terms and ask how they want theirs structured.
+
+**What to explain (adapt to the user's level — assume they might be new to this):**
+
+Each codebase module gets a `context/index.md` — a plain-text map of every file in the module. Think of it as two lists:
+- **Files** (called "nodes") — every file in the module with a short description of what it does. Detailed enough that you could understand the module's structure without opening any source files.
+- **Relationships** (called "edges") — which files depend on, import, call, or relate to other files. For example: "server.ts imports auth-middleware.ts and uses it as route middleware."
+
+The point is that an agent can read this one file and understand how the codebase fits together — what exists, what each piece does, and how they connect. It's like a table of contents that also shows the wiring diagram.
+
+See `agent/new.md` for the full format and an example.
+
+**What to ask the user:**
+
+- "Does one index per [project/package/service] make sense, or would you want to break it down further into sub-indexes for large components?"
+- "Are there parts of the codebase that are more important to map in detail vs. areas that are straightforward and just need a one-liner?"
+- "Would you prefer I generate a first draft from the file listing and we refine it together, or would you rather walk me through the structure?"
+
+Wait for the user's answers before generating. The index is most useful when it reflects how the developer actually thinks about the code, not how the file system happens to be organized.
 
 ### Step 6: Create the IDE-specific entrypoint
 

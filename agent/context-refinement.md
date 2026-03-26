@@ -2,10 +2,12 @@
 
 Use this process on **any** project that uses markdown documentation and an agentic workflow. It does **not** change folder layout or file names. It produces evidence about whether **wording and explanations** are clear enough for a new session, so you can refine prose in existing files.
 
+**Platform note:** This process is designed for platforms that support sub-agents and multiple model tiers. If your platform does not support sub-agents, you can still run this process — execute all phases sequentially in a single session instead of in parallel. If you only have access to one model, use it for all phases.
+
 **Roles:**
-- **Orchestrator** — the main agent (you). Runs the smart step, splits questions, spawns exactly five evaluator sub-agents, aggregates results, and optionally drafts doc edits.
-- **Planner model** — use the **most capable** model available for generating the 25-question bank (reasoning, nuance, coverage).
-- **Evaluator models** — use **faster / cheaper** models. Five parallel runs, five questions each. Read-only: no file edits, no shell commands that change state.
+- **Orchestrator** — the main agent (you). Runs the smart step, splits questions, spawns exactly five evaluator sub-agents (or runs them sequentially if sub-agents aren't available), aggregates results, and optionally drafts doc edits.
+- **Planner model** — use the **most capable** model available for generating the 25-question bank (reasoning, nuance, coverage). If you only have one model, use it.
+- **Evaluator models** — use **faster / cheaper** models if available, otherwise use the same model. Five parallel runs (or sequential), five questions each. Read-only: no file edits, no shell commands that change state.
 
 **Rules:**
 - Evaluators follow `agent/intro.md` regarding sub-agents: **they do not spawn further sub-agents** and **they do not delete files**.

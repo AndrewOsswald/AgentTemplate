@@ -23,17 +23,11 @@ For each module touched this session:
 - **`agent/system-environment.md`** — update if software was installed/removed on the dev machine.
 - **Parent README files** — if you added a sub-module or guide, does the parent's README list it?
 
-## 4. Commit and push
+## 4. Version control
 
-Commit all changes and push to the remote so future sessions start from the latest state.
+How changes are committed, branched, and pushed depends on the team's git workflow. If git behavior hasn't been discussed yet, ask the user how they'd like end-of-session commits handled — or note that this can be set up in a future session.
 
-```bash
-git add -A
-git commit -m "<descriptive message>"
-git push origin main
-```
-
-If the push fails because the remote is ahead, pull first, resolve conflicts with the user, then push. Do not force-push.
+Until a git workflow is agreed on, **at minimum** stage and commit locally so work isn't lost. Do not push automatically unless the user has explicitly set that up.
 
 ## 5. Confirm
 

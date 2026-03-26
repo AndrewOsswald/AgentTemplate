@@ -14,7 +14,7 @@ Two things determine whether an agent produces accurate results:
 
 **Context Quality** — the agent needs documentation that is highly explicit and in natural language. A code file or documentation file doesn't contain enough info about design intentions for an agent to effectively make modifications. Good documentation bridges that gap between what the files contain and what the developer intended.
 
-**Context Selection** — the agent needs documentation that is concise, compartmentalized, non-redundant, and easy to navigate. Too much non-relevant information in the context window — even if the information is accurate — causes inaccuracy through a phenomenon called "context shifting." Smarter models with bigger context windows don't fix this. Selective, relevant context does.
+**Context Selection** — the agent needs documentation that is concise, compartmentalized, non-redundant, and easy to navigate. Too much non-relevant information in the context window — even if the information is accurate — causes the agent to lose focus and give worse answers. This happens because the model's attention gets pulled toward whatever is in front of it, relevant or not. Bigger context windows and smarter models don't fix this — they just give you more room to make the same mistake. Selective, relevant context does fix it.
 
 Both are equally important. The agent needs good information, but too much good information is still a problem. The solution is documentation that is high quality AND structured so the agent can find exactly what's relevant without loading everything else.
 
@@ -24,10 +24,10 @@ This architecture solves both problems by making the documentation structure its
 
 ## Additional principles
 
-- **Documentation is most effective when written and revised by the model itself** (Zhang et al., 2026). Agents should update docs as they work, not ask the user to edit them.
+- **The agent writes and maintains its own documentation.** When the agent writes the docs, it writes them in a way it can understand later. When a human writes docs for an agent, the result is usually either too vague or structured in a way the agent doesn't naturally navigate. Let the agent do the writing — ask it for the *information* and let it put it in the right place.
 - **Files are kept in the repo and tracked by git.** This provides history, rollback, and persistence across sessions.
-- **Sessions should be started and ended often** to keep the context window fresh and relevant. Long sessions accumulate irrelevant history that causes context shifting. All context lives in files, not in chat history.
-- **Clear patterns up front improve consistency and reliability** (Hong et al., 2024). The agent behavioral file (`agent/intro.md`) establishes the process and rules at the start of every session.
+- **Sessions should be short and frequent.** Long sessions accumulate conversation history that the agent can't unsee — old questions, dead-end approaches, superseded plans. All of that competes for attention with the actual task. Since all context lives in files (not chat history), ending a session costs nothing. A fresh session with good docs is more effective than a long session with stale context.
+- **Establish the rules before the work starts.** If the agent loads `agent/intro.md` at the start of every session, it follows the same process every time — same navigation pattern, same documentation habits, same "ask don't assume" rule. Without that anchor, each session drifts in its own direction and the docs get inconsistent.
 - **What explains well for an agent explains well for a human.** No separate agent/human documentation — one set of docs serves both audiences with clear, explicit natural language.
 - **Assumptions are where agents make mistakes.** A simpler model with complete information will outperform a powerful model that has to guess. When something is unclear, the agent should ask — a question is always cheaper than a wrong change.
 - **Setup is iterative, not exhaustive.** Good documentation comes from working conversations over time — not from a single interrogation session. The skeleton gets created first; details get filled in as the developer explains things through actual work. See `agent/setup.md`.
@@ -182,15 +182,14 @@ Two base templates that serve as building blocks. Most real modules combine elem
 ### Documentation template
 For modules that are mostly prose, guides, or reference material. The documentation IS the content — there's no separate system to track.
 
-- Default: README.md + plan files at module root
-- No `context/` folder needed
-- Optional: `decisions.md`, `guidelines.md`
+- Default: README.md + `context/` folder for plan files
+- Optional: `context/decisions.md`, `guidelines.md`
 
 ### Codebase template
 For code projects. Code files don't contain enough info about design intentions — context files bridge that gap.
 
 - Default: README.md + `context/` folder with `index.md`, `current-state.md`, plan files
-- `index.md` is a graph with **nodes** (every file in the module with a description detailed enough that the agent doesn't need to open it) and **edges** (dependencies, relationships, nesting). Sub-modules are listed as nodes with references to their own index. Research shows LLMs understand file structure better in graph format.
+- `index.md` is a map of the module with two parts: **files** (called "nodes" — every file with a description detailed enough that the agent doesn't need to open it) and **relationships** (called "edges" — which files import, call, or depend on other files). Sub-modules are listed as nodes with references to their own index. This format works better than a flat directory listing because it captures *how things connect*, not just what exists.
 - Codebase modules can be nested (monorepo pattern) — each sub-module has its own `context/index.md`
 - README tree continues into code subdirectories
 - Optional: `context/decisions.md` (ADRs), `guidelines.md`

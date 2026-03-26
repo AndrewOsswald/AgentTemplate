@@ -26,20 +26,19 @@ Use when the module is mostly prose, guides, or reference material. The document
 ```
 module/
 ├── README.md              # what's here, navigation, current state
-├── plan-*.md              # active work (at module root, only when needed)
+├── context/
+│   └── plan-*.md          # active work (only when needed)
 ├── meta/                  # optional — test outputs, scratch (see "Module-level meta" above)
 └── guides, reference...   # the actual content
 ```
 
 **Default context files:**
 - `README.md` — overview, navigation, current state. The README tree continues into subfolders if the module is nested.
-- `plan-*.md` — at module root. One per active task, each self-contained. The user decides when to delete plan files.
+- `context/plan-*.md` — one per active task, each self-contained. The user decides when to delete plan files.
 
-**No `context/` folder.** The documentation IS the current state and meta information. Plan files sit alongside the README.
-
-**Optional context files** (add at module root when needed):
-- `decisions.md` — architectural or design decisions worth preserving beyond the lifetime of a plan file. "We chose approach X over Y because Z." Prevents future agents from re-trying failed approaches.
-- `guidelines.md` — dedicated behavioral guidelines for the module when they're extensive enough to clutter the README. Layered on top of `agent/intro.md`.
+**Optional context files** (add in `context/` when needed):
+- `context/decisions.md` — architectural or design decisions worth preserving beyond the lifetime of a plan file. "We chose approach X over Y because Z." Prevents future agents from re-trying failed approaches.
+- `guidelines.md` (at module root) — dedicated behavioral guidelines for the module when they're extensive enough to clutter the README. Layered on top of `agent/intro.md`.
 
 ---
 
@@ -149,9 +148,7 @@ The `context/` folder exists when there's "meta" information about a thing that'
 
 Plan files track active work. When work is complete, the permanent record lives in the README and context files. The user decides when to delete a plan file — the agent does not delete plan files on its own. The user may want to keep plan files for iteration or reference.
 
-**Location:**
-- Documentation template: `plan-*.md` at module root
-- Codebase template: `context/plan-*.md`
+**Location:** Always in `context/plan-*.md`. Every module has a `context/` folder for plan files, even documentation modules.
 
 **Naming:** `plan-<slug>.md` where slug is short, lowercase, hyphenated (e.g. `plan-auth-refactor.md`, `plan-deploy-staging.md`).
 

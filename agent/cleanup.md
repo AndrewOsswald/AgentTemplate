@@ -1,29 +1,44 @@
-# cleanup.md — doc sync pass
+# cleanup.md — end-of-session review
 
-**For agents:** When the user says "clean up according to cleanup.md", run **steps 1–3** below. Goal: module docs and WIP state are accurate; index and system-environment updated if needed; changes pushed to the WIP branch so a fresh agent can continue from intro + WIP doc.
-
-**Humans:** Ask the agent to "clean up according to cleanup.md" at end of session so docs are synced and pushed to the WIP branch.
+When the user asks to clean up, run these steps. Goal: all documentation accurately reflects what happened this session so a fresh agent can continue without chat history.
 
 ---
 
-## 1. Module docs and WIP files
+## 1. Review work done this session
 
-- Review work done this session (code, config, wiring if applicable, completed steps).
-- **context/current-state.md** — Update wiring, code, working, not working, next/refs to match the module. If the module's purpose, place in the project, or rules (best practices, what not to do) changed, update those sections too. This is the agent entry for the module.
-- **Module README** (for humans): Update overview or how-to if functionality or steps changed. Do not duplicate current-state bullets in the README.
-- **WIP doc(s):** Move items between **Planned**, **In progress**, **Completed** to match what was done. Add refs to code/config/docs where useful. Repeat for each module/WIP touched.
+List what was changed: code written, config modifications, completed tasks, files created or modified.
 
-## 2. System environment and project index
+## 2. Verify context files
 
-- **`agent/system-environment.md`** — Update if software was installed/removed or run environment changed (versions, OS, hardware refs).
-- **`agent/index.md`** — Update if folder or key files changed (new module, new context doc, renames). Add path + one-line description for any new file so the index stays useful for choosing what to read instead of scanning the tree.
-- **README** (root or module) — Update if project scope, doc usage, or how to run changed.
+For each module touched this session:
 
-## 3. Push to the WIP branch
+- **Context files** (e.g. `context/current-state.md`, `context/index.md`, or equivalent per template) — do they accurately reflect the current state? Update if anything changed that wasn't captured during act.
+- **Module README** — does the overview still match reality? Update if capabilities, guides, or current state changed. Do not duplicate context file content — the README is the stable overview.
+- **Guides** — if you ran setup or operational steps, did the guide get updated with corrections, clarifications, or deviations?
+- **Plan files** — is progress accurately tracked? Move items between planned/in-progress/done. Update next steps. Add notes about failures or decisions.
 
-- **Branch:** From WIP doc (**Branch:** `main--<slug>`) or infer `wip-<slug>.md` → `main--<slug>`.
-- Commit uncommitted changes; checkout that branch if needed; push to origin. If multiple WIPs touched, push the primary WIP branch (or each with new commits).
+## 3. Verify project-level files
 
-## 4. Done
+- **Root `README.md`** — update if modules were added/removed or the project map changed.
+- **`agent/system-environment.md`** — update if software was installed/removed on the dev machine.
+- **Parent README files** — if you added a sub-module or guide, does the parent's README list it?
 
-Docs and index/env are in sync; WIP branch pushed. Confirm briefly to the user what you updated and that you pushed.
+## 4. Commit and push
+
+Commit all changes and push to the remote so future sessions start from the latest state.
+
+```bash
+git add -A
+git commit -m "<descriptive message>"
+git push origin main
+```
+
+If the push fails because the remote is ahead, pull first, resolve conflicts with the user, then push. Do not force-push.
+
+## 5. Confirm
+
+Tell the user briefly:
+- What modules were touched
+- What documentation was updated
+- Whether a commit was made
+- Any remaining work tracked in plan files

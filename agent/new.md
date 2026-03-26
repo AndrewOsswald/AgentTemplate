@@ -1,165 +1,294 @@
-# new.md — start a new WIP or create a new module
+# new.md — creating modules and plan files
 
-**For agents:** Use when the user asks to start a new WIP or create a new module.
+Use this file when creating a new module or starting a new plan file in an existing module. This file defines the three module templates, their context file types, and how to set them up.
 
-**Two workflows:** (1) **New module** = new folder (README, context/, code). (2) **New WIP** = new `context/wip-<slug>.md` in an existing module. Pick the one that matches. General context: **agent/intro.md**.
-
-**Humans:** Point an agent at intro and this file (e.g. "read intro and new.md, then create a new module for X").
+For background on why the templates are structured this way, see `agent/architecture.md`.
 
 ---
 
-## What is a WIP?
+## READMEs and navigation (for authors)
 
-A **WIP** (work in progress) is a unit of work tracked in a WIP doc (Planned / In progress / Completed). Two common kinds of WIPs:
+Agents are steered to navigate **depth-first on READMEs** (see `agent/intro.md`): root `README.md` → choose the branch that fits the task → that folder's `README.md` → repeat, then **plan files** for that module, then `context/` and guides. When you author a module `README.md`, put **what this folder is**, **sub-modules / key files**, and **pointers to active `plan-*.md` files** early so a depth-first pass can commit to the right branch without opening unrelated siblings first.
 
-- **Creating a new module** — the WIP is to bring a new module into the project (new folder, README, context folder, first WIP doc, branch). Use the workflow below for a **new module (new folder)**.
-- **Making a change to a module** — the WIP is to change or extend an existing module (e.g. add a feature, add CLI args, add an API endpoint). Use the workflow below for a **new WIP (existing module)**.
-
-Both are WIPs; the difference is whether the module already exists. Pick the workflow that matches.
+**Module-level `meta/` (optional):** Any module may include a **`meta/`** folder at the module root for **disposable verification artifacts** — tiny test scripts, one-off probes, saved **test or build log output**, fixture dumps. Use it during **Act** and especially **Review** when a plan calls for *run tests*, *smoke check*, or *capture command output*: put scripts and outputs here so **`context/`** stays reserved for durable state and **`src/`** stays clean. List `meta/` in the module `README.md` and in **`context/index.md`** (codebase) as nodes if present. Do not treat `meta/` as authoritative long-term state — summarize outcomes in the plan file and in context files as appropriate.
 
 ---
 
-## Documentation layout: one folder per module
+## Module templates
 
-- **Every module has its own folder** (at repo root or nested inside another module, e.g. `my-service/`, `parent/sub-module/`). There is **no** module-specific context stored inside `agent/`; all module context lives in that module's folder.
-- **Modules can be nested:** a module folder can contain submodule folders; each level uses the same format (README, context/, code).
-- Each module folder contains: **README.md** (main module doc), **context/** (WIP docs and other context), and the **code** for that module (scripts, drivers, etc.).
-- **Audience:** All docs are written for **both humans and AI**. Use clear structure and headings for parsing, explicit file paths and state for context, and readable prose for humans.
+There are three base templates. They are **building blocks, not rigid categories** — most real modules combine elements. Pick the pieces that fit your module and explain the setup in the module's README. Be creative to match needs; the README at the module level documents which template pieces are in use and why.
 
----
+### Documentation template
 
-## Module format (detailed)
+Use when the module is mostly prose, guides, or reference material. The documentation IS the content — there's no separate system to track.
 
-This format ensures that when the user gives an agent **intro + WIP doc path**, the agent has a clear handoff: intro explains the system, the WIP doc points to the README and lists exactly what else to read so a fresh agent can continue with full context. A project may have a single module or many; the format is the same.
-
-### Folder layout
-
+**Default structure:**
 ```
-<module-folder>/           e.g. my-feature/, api-server/, or parent/sub-module/
-  README.md                main module doc (project, best practices, overview, current state, how to run, refs)
-  context/
-    current-state.md      agent entry for this module: intro, how it fits, rules, then state (wiring, code, working, not, next/refs)
-    wip-<slug>.md         one file per WIP (planned / in progress / completed; "For a fresh agent" handoff)
-    (optional: wiring.md, test-summary.md, datasheet-notes.md, etc.)
-  (code: .py, config, etc.)
+module/
+├── README.md              # what's here, navigation, current state
+├── plan-*.md              # active work (at module root, only when needed)
+├── meta/                  # optional — test outputs, scratch (see "Module-level meta" above)
+└── guides, reference...   # the actual content
 ```
 
-**context/current-state.md** — For agents. **Start here for this module**; an agent doesn't need the whole-project description, just this module. This file is the first place the agent learns what the code is and does. Sections (in order):
+**Default context files:**
+- `README.md` — overview, navigation, current state. The README tree continues into subfolders if the module is nested.
+- `plan-*.md` — at module root. One per active task, each self-contained. The user decides when to delete plan files.
 
-1. **Opening** — One line: this file is the agent entry for this module; read it first for this part of the project.
-2. **What this module is** — Broad introduction to this part of the project: what the code is, what it does, what it's for. Module can be anything (hardware test, CLI, service, library); describe it so a fresh agent understands scope and purpose.
-3. **How it fits in the project** — One or two sentences: how this module relates to the rest of the repo (e.g. "This repo may have one or several modules; this one is the minimal example" or "One of several modules; others might be different services, CLIs, or boards"). No need to describe the whole project—just enough context so the agent knows where this module sits.
-4. **Rules for working on this module** — Coding best practices, what not to do, module-specific discipline. Examples (adapt to the module): spell out steps and don't assume experience; follow existing code style and conventions; respect env vars or config; for hardware modules: wiring, safety, one process per pin or BUSY/NSS discipline, refer to `agent/system-environment.md` for constraints; for services: port, logging, graceful shutdown. List what an agent must follow when editing or suggesting code.
-5. **Wiring** — What's connected (or ref to wiring.md). Use only if the module has hardware; for software modules, replace with **Config / env** (how to configure, required env vars, config file paths) or omit.
-6. **Code** — Paths and one-line each. Update as files change.
-7. **Working** — What passes or is done. Update as tests or features land.
-8. **Not working / limitations** — What's broken or not yet done.
-9. **Next / refs** — Pointers to WIP doc, test-summary, datasheet notes, system-environment, etc.
+**No `context/` folder.** The documentation IS the current state and meta information. Plan files sit alongside the README.
 
-Keep this file updated as the module changes. Humans get overview and how-to from the README; agents get intro, rules, and state from this file.
-
-**Context note files** (wiring, test-summary, API spec, config notes, etc.): For human and agent scanning, start each with a one-line **Contains:** or **When to read:** that says what's inside (e.g. "**Contains:** Connection table and safety notes." or "**Contains:** API endpoints and request format."). Then the index and the file itself both tell the reader whether to open it without reading the whole doc.
-
-- **Slug:** Short, lowercase, hyphenated (e.g. `my-feature`, `add-api-endpoint`). Use the same slug in the WIP filename and the branch: `wip-my-feature.md` → branch `main--my-feature`.
-
-### README.md — for humans
-
-The README is the main entry for **human** readers: what the module is, how to run it (and how to wire or configure it if applicable), and where to find more. Write it in clear prose. **Current state for agents** lives in **`context/current-state.md`** (structured for agents); the README does not duplicate that. Sections (in order):
-
-1. **Title** — `# Module: <name>` (or a short human-friendly title).
-2. **## Project** — What kind of project this is and what this module does. One or two sentences.
-3. **## Best practices** — What applies when working on this module (run steps, safety if applicable, code/style discipline). Refer to `agent/system-environment.md` when the WIP involves host or hardware.
-4. **## Overview** — What the module does (narrative or bullets).
-5. **How to run** (and **how to wire** or **how to configure** if applicable) — Step-by-step for humans: what you need, run commands, config or wiring order. Can be one section or several.
-6. **## Deeper docs (in context/)** — List context files (include `context/current-state.md` — "Current state (for agents)") and other notes. One line each.
-7. **## Related WIP doc(s)** — `context/wip-<slug>.md` — brief label.
-
-Optional: a short "Main scripts" or "Files" list if it helps humans find the code. Do not put a long agent-style "Current state" section in the README; that belongs in **context/current-state.md**.
-
-### context/wip-<slug>.md — sections
-
-1. **Title and opening block**
-   - `# WIP: <description>`
-   - **Module details and current state:** See **`context/current-state.md`** in this folder (wiring, code, what works, what doesn't). README in parent folder is for humans (overview, how to run).
-   - **Branch:** `main--<wip-slug>`. One branch per WIP; cleanup pushes to this branch.
-   - **Run environment:** `agent/system-environment.md` (when the WIP involves host or hardware; omit if not).
-   - **For a fresh agent:** Exact read order so a new agent has full context. Example: "Read `agent/intro.md`, then this WIP doc and **`context/current-state.md`** (and `../README.md` for overview/run if needed). For run environment (e.g. wiring, pins, env vars), read `agent/system-environment.md` when relevant. That set gives you the context needed to continue." For a complex WIP, add a **## Context for next session** section below with what's done, current failure, and what to try next; the "For a fresh agent" line can then say "… then this WIP doc and `../README.md`, then <list of context files>. See **Context for next session** below."
-
-2. **## Planned** — Not yet started. Bullet list.
-
-3. **## In progress** — Current work. Move items here when you start; move to Completed when done.
-
-4. **## Completed** — Done. Add file paths or short notes when useful. Append new items as work completes.
-
-Optional for complex WIPs: **## Context for next session** — Summary for handoff (what's done, what failed, what to try next, key refs). Keeps the WIP doc self-contained for a fresh chat.
-
-### Handoff in practice
-
-- User tells the agent: "Read intro and the WIP doc" (and gives the path to the WIP doc, e.g. `sx1262_gpio_test/context/wip-sx1262-ping-test.md`).
-- Agent reads intro → learns the system and that it has no prior context.
-- Agent reads the WIP doc → gets branch, state (Planned / In progress / Completed), and the **For a fresh agent** line (and **Context for next session** if present).
-- Agent follows that read order (current-state, README if needed, then any listed context files, and system-environment when the WIP involves run environment) → has module intro, rules, current state, and what to do next.
+**Optional context files** (add at module root when needed):
+- `decisions.md` — architectural or design decisions worth preserving beyond the lifetime of a plan file. "We chose approach X over Y because Z." Prevents future agents from re-trying failed approaches.
+- `guidelines.md` — dedicated behavioral guidelines for the module when they're extensive enough to clutter the README. Layered on top of `agent/intro.md`.
 
 ---
 
-## New module template (structure)
+### Codebase template
 
-When starting a **new module**, create a folder (at repo root or inside an existing module for a submodule) and use the format above. You can copy from an existing module (e.g. `gpio-led-blink/`) and rename. Checklist:
+Use when the module is a code project. Code files don't contain enough info about design intentions — the context files bridge that gap.
 
-**context/current-state.md:** Opening (agent entry for this module) → What this module is → How it fits in the project → Rules for working on this module → Wiring or Config/env (if applicable) → Code → Working → Not working / limitations → Next / refs. Agent-only; update as module changes.
+**Default structure:**
+```
+module/
+├── README.md              # project overview, architecture, how to run, guidelines
+├── context/
+│   ├── index.md           # graph-based code map
+│   ├── current-state.md   # deployment status, known issues, active branches
+│   └── plan-*.md          # active work
+├── meta/                  # optional — local test scripts, junit/log captures, smoke-run output
+├── src/                   # (or whatever the code structure is)
+│   ├── README.md          # README tree continues into code folders
+│   └── ...
+├── Dockerfile             # if containerized
+└── ...
+```
 
-**README.md:** For humans. Title → ## Project → ## Best practices → ## Overview → how to run (and wire/config if applicable) → ## Deeper docs (in context/) (include current-state.md) → ## Related WIP doc(s).
+**Default context files:**
 
-**context/wip-<slug>.md:** Opening block (Module details, Branch, Run environment if needed, **For a fresh agent:** read order) → ## Planned → ## In progress → ## Completed.
+`context/index.md` — A graph-based map of the entire module. Research shows LLMs understand file structure better in graph format than flat directory listings.
 
-When adding only a **new WIP** to an existing module (module folder and README already exist), add a new **context/wip-<slug>.md** with the same WIP doc structure; add a line under **Related WIP doc(s)** in the README so the new WIP is discoverable.
+**Nodes**: every file in the module — code files, context files, READMEs, guides, everything. Each node has a description of what the file contains and its purpose, detailed enough that the agent doesn't need to open the file to understand it. Sub-modules are listed as nodes with a reference to their own `context/index.md` for internals.
+
+**Edges**: dependencies and relationships between nodes — imports, calls, extends, depends on. For context files: which plan file targets which code files, which guidelines apply to which components. For nested modules: how sub-modules relate to each other (e.g., frontend consumes backend API).
+
+All file references use exact relative paths from the module root.
+
+Update when files are created, deleted, renamed, or their purpose/relationships change.
+
+Example:
+```markdown
+## Nodes
+
+- `README.md` — Project overview, architecture, how to run, guidelines
+- `context/index.md` — This file. Graph-based map of the codebase.
+- `context/current-state.md` — Deployment status, known issues, active branches
+- `context/plan-auth-refactor.md` — Active plan for refactoring the auth module
+- `src/server.ts` — Express server entry point, configures middleware and routes
+- `src/auth/middleware.ts` — JWT authentication middleware, validates tokens on protected routes
+- `src/auth/token-service.ts` — Token generation and validation, wraps jsonwebtoken
+- `src/db/user-repository.ts` — User CRUD operations against PostgreSQL
+- `frontend/` — Sub-module: React frontend (see `frontend/context/index.md`)
+
+## Edges
+
+- `src/server.ts` → `src/auth/middleware.ts` (imports, applies as route middleware)
+- `src/auth/middleware.ts` → `src/auth/token-service.ts` (calls for token validation)
+- `src/auth/token-service.ts` → `src/db/user-repository.ts` (queries user data for claims)
+- `context/plan-auth-refactor.md` targets `src/auth/` (plan scope)
+- `frontend/` → `src/server.ts` (consumes API endpoints)
+```
+
+`context/current-state.md` — What the system looks like right now. Separate from README because this changes frequently:
+- What's deployed and where
+- What's working, what's broken, known issues
+- Active branches and what they're for
+- Recent significant changes that affect how to work with the code
+
+`context/plan-*.md` — One per active task. Self-contained. The user decides when to delete plan files.
+
+**README.md** stays in the main folder structure alongside code (not in context/). The README tree continues into code subdirectories — each significant folder can have a README explaining what's in it.
+
+**Guidelines and rules** (coding standards, conventions) go in the README as a section for simple cases.
+
+**Optional context files** (add in `context/` when needed):
+- `context/decisions.md` — Architecture Decision Records (ADRs). Recommended for any non-trivial codebase. "We tried X, it failed because Y, we went with Z." "We chose library A over B because..." Persists beyond plan files so future agents don't re-try failed approaches.
+- `guidelines.md` (at module root) — Dedicated behavioral guidelines for the module, layered on top of `agent/intro.md`. Use when guidelines are extensive enough that they'd clutter the README (coding standards, deployment rules, security requirements, testing conventions). The agent loads these when entering the module.
 
 ---
 
-## WIP doc format
+### Device template
 
-- **Sections (exactly three):** **Planned** (not started), **In progress** (current work), **Completed** (done; add file paths when useful). Respect when reading or updating.
-- **Path:** `<module-folder>/context/wip-<slug>.md`. Slug: short, lowercase, hyphenated (e.g. `my-feature`, `add-api-endpoint`). Multiple WIP docs in one module are allowed.
-- WIP docs may reference the README and other files (code, config, other markdown); follow those references.
+Use when the module is a physical or virtual system (server, Raspberry Pi, VM, router, etc.). The agent needs to know what's currently installed, running, and how to connect.
 
----
+**Default structure:**
+```
+module/
+├── README.md              # what this device is, guide list, overview, guidelines
+├── context/
+│   ├── environment.md     # the device's current state
+│   └── plan-*.md          # active work
+├── meta/                  # optional — short probe scripts, saved SSH check output, test curls
+├── setup-guide.md         # how to set up from scratch
+└── other guides...        # operational guides
+```
 
-## Branch naming: one branch per WIP
+**Default context files:**
 
-- **One branch per WIP, not per module.** Every WIP gets its own branch. Multiple WIPs on the same module = multiple branches.
-- **Convention:** `main--<wip-slug>`. The WIP slug is the slug of that WIP's doc (e.g. `wip-my-feature.md` → branch `main--my-feature`; `wip-add-config.md` → branch `main--add-config`). Branch is created off `main`.
-- **Note the branch in the WIP doc** (e.g. at the top: **Branch:** `main--<wip-slug>`). Cleanup pushes to the branch named in the active WIP doc.
+`context/environment.md` — The core artifact for a device module. This IS the current state — no separate current-state file needed. Contains:
+- Connection info (SSH user, hostname, IP, port)
+- OS, kernel, hardware
+- What's installed (Docker, services, tools)
+- What's running (containers, services, cron jobs — with enough detail to recreate)
+- Network configuration (interfaces, ports)
+- Storage and backup paths
+- Update this file every time the device's state changes — installations, config changes, new services, removed services, even half-installed things that failed
 
----
+`context/plan-*.md` — One per active task. Self-contained. The user decides when to delete plan files.
 
-## WIP: create a new module (new folder)
+**Guides** live in the module folder alongside the README. They are step-by-step instructions for setup and operations. Update guides when procedures change — steps that failed, deviations, new steps.
 
-When the WIP is to **create a new module** (module doesn't exist yet), follow the **Module format (detailed)** and **New module template (structure)** above. Concretely:
-
-1. **Choose a slug** — Short, lowercase, hyphenated (e.g. `my-feature`, `api-server`). The WIP file will be `wip-<slug>.md` and the branch `main--<slug>`.
-
-2. **Create the module folder** (at repo root or inside another module for a submodule, e.g. `my_feature/` or `parent/sub_feature/`). Optionally copy an existing module folder and rename it and its contents.
-
-3. **Write README.md** — For humans. Title; ## Project; ## Best practices; ## Overview; how to wire/run; ## Deeper docs (in context/) including current-state.md; ## Related WIP doc(s). No "Current state" section in README; that goes in context/current-state.md.
-
-4. **Create context/** — **context/current-state.md** (full structure: What this module is, How it fits, Rules, then Wiring or Config/env if applicable, Code, Working, Not working, Next/refs). **context/wip-<slug>.md**: title; **Module details and current state:** See `context/current-state.md`; **Branch:** `main--<slug>`; **Run environment:** `agent/system-environment.md` when the WIP involves host or hardware; **For a fresh agent:** read order (intro → this WIP doc → current-state.md, README if needed, system-environment when relevant). Then ## Planned, ## In progress, ## Completed.
-
-5. **Update agent/index.md** — Add the new module and each key file (README, WIP doc, any new context files) with a one-line description of what's in it. The index is useful because agents can choose what to read from descriptions instead of opening the file structure; keep it up to date when you add modules or context files.
-
-6. **Create the WIP branch** — From repo root: `git checkout main`, `git pull` (if applicable), then `git checkout -b main--<slug>`. Ensure the WIP doc's **Branch:** line matches. Commits for this WIP go on this branch; cleanup pushes to it.
-
----
-
-## WIP: change an existing module (new WIP doc)
-
-When the WIP is to **make a change to an existing module** (add a new WIP doc for this work):
-
-1. Create **<module-folder>/context/wip-<slug>.md** with a new slug. Use exactly three level-2 headers; add at the top: module details in parent README; **Branch:** `main--<wip-slug>`.
-2. **Create the WIP branch:** Checkout `main`, pull, then create and checkout `main--<wip-slug>`. This WIP gets its own branch.
-3. Optionally add a reference to the new WIP doc from the module README (e.g. under "Related WIP doc(s)") so it's discoverable.
+**Optional context files** (add in `context/` when needed):
+- `context/decisions.md` — Why things are configured the way they are. Rejected approaches.
+- `context/changelog.md` — Chronological record of significant changes. Short entries. This fills the gap that git covers for code — git tracks documentation changes but not actual system state changes.
+- `guidelines.md` (at module root) — Dedicated behavioral guidelines when extensive enough to clutter the README.
 
 ---
 
-## After creating
+## Custom context types
 
-- Update the WIP doc as work moves (Planned → In progress → Completed). Update **context/current-state.md** when the module's state changes (wiring, config, code, working/not); update the README when overview or how-to steps change. See `agent/intro.md` (Keeping docs in sync) and `agent/cleanup.md` for final pass.
+The templates define defaults and recommended optional types, but modules can add any custom context files they need. If a module needs something not covered by the templates (e.g. `migrations.md` for database schema tracking, `dependencies.md` for cross-module relationships, `api-reference.md` for external integrations), add the file and explain it in the README.
+
+The principles stay the same for any context file: concise, compartmentalized, non-redundant, and documented in the module's README so the agent discovers it through normal navigation.
+
+---
+
+## Mixing templates
+
+Most real modules combine elements from multiple templates. Examples:
+- A web app deployed on a server → codebase template (index, current-state) + device template (environment)
+- Infrastructure-as-code (Terraform, Docker configs) → codebase template
+- A documentation site with a build step → documentation template + some codebase elements (index for the build tooling)
+
+The README at the module level explains which pieces are in use. Don't force a module into one template — pick the context files that serve it and skip the ones that don't.
+
+---
+
+## The `context/` folder
+
+**Not the same as `meta/`:** `context/` holds **durable** state and plans. **`meta/`** holds **disposable** verification artifacts (test logs, scratch scripts). See **Module-level `meta/`** above.
+
+The `context/` folder exists when there's "meta" information about a thing that's separate from the thing itself:
+- A codebase has code + context about the code
+- A device has guides + context about the device
+- A documentation module's content IS its meta information — no context/ folder needed
+
+---
+
+## Plan file standard
+
+Plan files track active work. When work is complete, the permanent record lives in the README and context files. The user decides when to delete a plan file — the agent does not delete plan files on its own. The user may want to keep plan files for iteration or reference.
+
+**Location:**
+- Documentation template: `plan-*.md` at module root
+- Codebase / Device template: `context/plan-*.md`
+
+**Naming:** `plan-<slug>.md` where slug is short, lowercase, hyphenated (e.g. `plan-auth-refactor.md`, `plan-deploy-staging.md`).
+
+**Multiple plans per module:** allowed. Each is self-contained with its own slug.
+
+**Tests and verification:** A plan may include **Review** work — unit tests, integration tests, `build`, `curl` checks, or probes. Say **what to run** and **where evidence goes** (e.g. "save stdout to `meta/last-smoke.txt`"). Small scripts and log captures belong in the module's **`meta/`** folder, not mixed into `context/`; put pass/fail conclusions and impact on system state in **Notes** and in **`context/current-state.md`** or **`environment.md`**.
+
+**Standard structure:**
+```markdown
+# plan-<slug>.md — <short description>
+
+Self-contained. A new agent with no chat history should be able to read
+this file and continue the work.
+
+## Context references
+
+- Module: `path/to/module/`
+- Read: `context/current-state.md` (deployment state), `context/index.md` (code map)
+- Guidelines: `guidelines.md` (if one exists for this module)
+
+## Background
+
+What we're doing and why. 1-3 sentences.
+
+## Plan
+
+Full approach, dependencies, risks.
+
+## Progress
+
+- [x] Step 1: Set up database schema — done
+- [x] Step 2: Implement repository layer — done, deviated: used query builder instead of raw SQL
+- [ ] Step 3: Add API endpoints — next
+- [ ] Step 4: Write integration tests
+
+## Next steps
+
+What specifically should happen next. A fresh agent should be able to read
+Background + Next Steps and get moving without parsing the entire plan.
+
+Step 3 is next. Need POST /users and GET /users/:id endpoints.
+Repository layer from step 2 is ready. See `context/index.md` for file locations.
+
+## Notes
+
+Failed attempts with enough detail to avoid re-trying:
+- Step 2: tried raw SQL with template literals, hit SQL injection concerns.
+  Switched to query builder. Recorded in `context/decisions.md`.
+
+Decisions made during this task:
+- Chose query builder over ORM to keep dependency footprint small.
+
+## Verification (optional)
+
+Commands or test targets for Review, and where output is stored:
+- `npm test` — expect green; last log: `meta/test-output.txt`
+- Or: smoke script `meta/probe-api.sh` (document result in Notes)
+```
+
+Plan file sections explained:
+- **Context references** — direct paths to files the agent should read before continuing. Tells a new agent exactly what to load without navigating the full tree.
+- **Background** — what and why, brief.
+- **Plan** — full approach, not just what's next but the complete picture.
+- **Progress** — status per step with notes on deviations and failures. Not just checkboxes — include what happened.
+- **Next steps** — what to do right now. A fresh agent reads Background + Next Steps to get moving fast.
+- **Notes** — failed attempts (what was tried, what error, why it didn't work), decisions made during the task. Enough detail that a future agent won't re-try something that already failed.
+- **Verification (optional)** — tests, builds, or checks to run during Review; paths under **`meta/`** for scripts and captured output; conclusions still summarized in Notes and context files.
+
+**README references active plans** so the agent discovers them through normal navigation: "Active work: [plan-auth-refactor.md](context/plan-auth-refactor.md) — refactoring the authentication module."
+
+---
+
+## Direct file references
+
+All context files, READMEs, plan files, and guides should reference other files using exact relative paths. Not "the state file" — `context/current-state.md`. Not "the setup guide" — `setup-guide.md`. The agent should always know exactly where a file is without searching.
+
+This applies to:
+- README descriptions of what's in a folder
+- Plan file context references and notes
+- Index.md nodes and edges
+- Any cross-reference between documentation files
+
+---
+
+## Creating a new module
+
+1. Choose a template (or combination) based on what the module is.
+2. Create the folder with README.md and the template's default context files.
+3. Write the README: what this module is, what's in it, which template pieces are in use, any guidelines.
+4. If there's immediate work to do, create a plan file.
+5. Update the parent folder's README to list the new module.
+
+---
+
+## Regenerating system-environment.md
+
+When setting up this project on a new machine, regenerate `agent/system-environment.md`:
+
+1. Read the current file to see its structure.
+2. Run system commands to gather environment data (OS, kernel, CPU, memory, storage, user, hostname, installed runtimes, git version — adapt for the platform).
+3. Rewrite the file with the new data, keeping the same structure.

@@ -1,29 +1,41 @@
-# cleanup.md — doc sync pass
+# cleanup.md — end-of-session review
 
-**For agents:** When the user says "clean up according to cleanup.md", run **steps 1–3** below. Goal: module docs and WIP state are accurate; index and system-environment updated if needed; changes pushed to the WIP branch so a fresh agent can continue from intro + WIP doc.
-
-**Humans:** Ask the agent to "clean up according to cleanup.md" at end of session so docs are synced and pushed to the WIP branch.
+When you're done working with the agent for this session, have it run through this checklist. The goal: everything important from this session is captured in files and memory so the next session can pick up without any chat history.
 
 ---
 
-## 1. Module docs and WIP files
+## What the agent will do
 
-- Review work done this session (code, config, wiring if applicable, completed steps).
-- **context/current-state.md** — Update wiring, code, working, not working, next/refs to match the module. If the module's purpose, place in the project, or rules (best practices, what not to do) changed, update those sections too. This is the agent entry for the module.
-- **Module README** (for humans): Update overview or how-to if functionality or steps changed. Do not duplicate current-state bullets in the README.
-- **WIP doc(s):** Move items between **Planned**, **In progress**, **Completed** to match what was done. Add refs to code/config/docs where useful. Repeat for each module/WIP touched.
+### 1. Review what happened
 
-## 2. System environment and project index
+The agent summarizes what was done this session — code written, tasks completed, files changed, decisions made.
 
-- **`agent/system-environment.md`** — Update if software was installed/removed or run environment changed (versions, OS, hardware refs).
-- **`agent/index.md`** — Update if folder or key files changed (new module, new context doc, renames). Add path + one-line description for any new file so the index stays useful for choosing what to read instead of scanning the tree.
-- **README** (root or module) — Update if project scope, doc usage, or how to run changed.
+### 2. Update documentation
 
-## 3. Push to the WIP branch
+For each module touched:
+- Are context files accurate? (`current-state.md`, `index.md`, etc.)
+- Does the module README still match reality?
+- Are plan files up to date with progress?
+- Were any guides updated if procedures changed?
 
-- **Branch:** From WIP doc (**Branch:** `main--<slug>`) or infer `wip-<slug>.md` → `main--<slug>`.
-- Commit uncommitted changes; checkout that branch if needed; push to origin. If multiple WIPs touched, push the primary WIP branch (or each with new commits).
+At the project level:
+- Does the root `README.md` still map the project correctly?
 
-## 4. Done
+### 3. Encode important knowledge into memory
 
-Docs and index/env are in sync; WIP branch pushed. Confirm briefly to the user what you updated and that you pushed.
+The agent reviews the session and encodes anything a future session would need:
+- Decisions made and why
+- New conventions or patterns discovered
+- Developer preferences expressed during the session
+- Problems encountered and how they were resolved
+- Anything that would force the developer to repeat themselves if lost
+
+This is the most important step. Everything in chat history disappears when the session ends. Memory is what persists.
+
+### 4. Confirm
+
+The agent tells you:
+- What was done
+- What documentation was updated
+- What was encoded into memory
+- Any remaining work tracked in plan files

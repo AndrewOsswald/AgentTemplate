@@ -1,84 +1,110 @@
-# setup.md — initialize a new project
+# setup.md — getting the agent acquainted with your project
 
-**For agents:** Use when the user says to set yourself up after copying `agent/` into a new project. Main actions: regenerate **`agent/system-environment.md`** for this run environment; remove the example module (if present); **update all references to the project being a template** so that after setup the project is described as the user's project, not a template.
-
-**Humans:** After copying the agent folder to a new project, tell the agent to read setup.md and set itself up.
+This guide explains what happens when the agent is first introduced to your project. Whether you want a full walkthrough or just need the agent to start working immediately, the process adapts to you.
 
 ---
 
-## How the documentation is set up
+## What to expect
 
-- **intro.md** — First thing to read in a new chat (user points you here). Gives read order (WIP doc → module current-state → system-environment when relevant), context sources, how to read module docs, keeping docs in sync, paths, rules. Rules and best practices are in each module's context/current-state.md. One branch per WIP; cleanup pushes to it.
-- **new.md** — When the user wants to start a new WIP or create a new module. Defines what a WIP is, module layout (one folder per module, each with README + context/), WIP doc format, branch naming (`main--<wip-slug>`), and two workflows: create a new module (new folder) or add a new WIP to an existing module.
-- **cleanup.md** — When the user says to clean up (e.g. "clean up according to cleanup.md"). Final pass: update module README and WIP doc, update env and index if needed, push to the WIP's branch.
-- **system-environment.md** — Run environment for **this** project (e.g. laptop, server, container, embedded host): OS, interfaces when applicable, config path, reference tables. **Regenerated per machine or run target**; in a new project you must regenerate it (see below).
-- **index.md** — Paths and one-line descriptions of what's in each doc (agent docs + each module's README and context files). Agents use it to choose what to read without opening the file tree. Update it when you add/remove docs or modules so the descriptions stay accurate.
-- **Module folders** — Created at repo root or nested inside another module when you start modules (see new.md). Each has a README and a context/ subfolder; same format at every level. New-module structure is described in new.md; there is no separate template folder. There is no module-specific context stored inside agent/.
+The agent will briefly introduce itself and what it can do. Then it needs to learn about your project — how much and how fast depends on you.
 
-Intro, new, and cleanup are **generic**. Only **system-environment.md** (and optionally index.md) must be updated when you initialize a new project.
+**Two common scenarios:**
 
----
+### "I want to set this up properly"
 
-## Running setup on an existing project
+Great — the agent will explore your project, ask you questions about it, and build an initial understanding. This is the ideal first session. See the full setup process below.
 
-Setup **does not modify any application code** or any module other than the template’s **example-module/** folder. It only:
+### "I just need you to do this task"
 
-- Removes **example-module/** (if present) and updates **agent/index.md** to drop the example section.
-- Overwrites **agent/system-environment.md** with fresh environment data.
-- Optionally adds or removes rows in **agent/index.md** for other docs/modules.
+That works too. The agent will:
+1. Ask a few quick questions about the task and any coding standards you follow
+2. Do the work
+3. Learn about the project through the work itself
+4. When the task is done, suggest spending some time learning more about the project — no pressure, no rush
 
-So it is safe for your codebase. Two caveats: (1) If you have a **real** module named **example-module/** at repo root, setup will delete it—rename it first if you care about it. (2) Any custom content you added to **agent/system-environment.md** will be replaced; back it up or merge it back after if needed. On a project that never had the template’s example module, step 1 is a no-op (nothing to delete).
+Both approaches work. The agent gets smarter over time regardless of which path you take. Full setup is faster; task-first is more natural. Either way, every session adds to what the agent knows.
 
 ---
 
-## What to do when initializing a new project
+## Before starting: two quick questions
 
-You've copied this agent folder into a new project folder. Do **steps 1–5 in order**. After setup, **the project is no longer a template**—it is the user's project. Step 4 ensures every doc that referred to "template" is updated to reflect that. (If the project already has real modules and no template example, step 1 is a no-op—see "Running setup on an existing project" above.)
+The agent will ask:
 
-### 1. Remove the example module
+1. **"Is this a company/enterprise API instance, or a personal one?"** — On a personal instance, the agent will avoid reading files that might contain secrets (private keys, `.env` files, credentials), because even reading a file sends its contents through the API.
 
-The template includes an **example-module/** folder at repo root only to show the standard layout (README, context/current-state.md, context/wip-*.md, code). When initializing a **new** project, delete this folder so the repo starts with no modules:
+2. **"Are there files or directories I should avoid reading?"** — If parts of your project are sensitive, let the agent know upfront.
 
-- **Delete the entire `example-module/` directory** (including README, context/, and example.py).
-- **Update `agent/index.md`** — Remove the "Example module" section (or all rows that reference example-module/). The index should go back to listing no modules, with the placeholder text: *(Template: no modules yet. When you create modules with agent/new.md, add each module and its key files here.)*
+The agent may run some read-only system commands to learn about your environment if it needs that information for the work. It will encode anything important into its memory.
 
-Do not skip this step. The example module is for reference only; the new project should begin with only the agent/ docs (including agent/current-state.md) and the root README.
+---
 
-### 2. Regenerate `agent/system-environment.md`
+## The full setup process
 
-That file currently describes a different machine. Regenerate it for **this** machine:
+If you have time for a proper introduction, here's what the agent will do:
 
-1. **Read the current `agent/system-environment.md`** to see its structure: when to use; constraints (if any); config path; pinout or interfaces (if applicable); hardware/software reference tables. Keep the same structure and formatting; only the **values** will change.
-2. **Run system commands** to gather this run environment's data. If a command isn't available on this platform (e.g. `vcgencmd` only on Raspberry Pi), skip it and omit or adapt that section. Examples (adjust for OS and target—Linux server, macOS, Docker, embedded):
-   - **OS:** `cat /etc/os-release` (or equivalent)
-   - **Kernel:** `uname -a`, `cat /proc/version`
-   - **CPU / board:** `cat /proc/cpuinfo` (model, revision; on embedded, device-tree model if present)
-   - **Memory:** `free -h`, `cat /proc/meminfo` (head)
-   - **Storage:** `df -h /`, `lsblk`
-   - **Firmware/config (if applicable):** e.g. on Raspberry Pi: `vcgencmd` and `/boot/firmware/config.txt`; on other platforms use the relevant config path
-   - **Interfaces (if applicable):** e.g. `ls /dev/` for serial, GPIO, I2C, SPI; `lsmod` for loaded modules; omit on pure software targets
-   - **User / permissions:** `whoami`, `id`, `hostname`
-   - **Runtimes:** `python3 --version`, `node --version`, or whatever the project uses
-   - **Git:** `git --version`, optionally `gh --version`
-3. **Rewrite `agent/system-environment.md`** with the new data. Keep the same structure; fill in values for **this** run environment. Remove or adapt sections that don't apply (e.g. no pinout on a pure server; no platform-specific commands on a different OS).
+### 1. Explore your project
 
-### 3. Update `agent/index.md` if needed
+The agent looks at your project's structure — folders, files, languages, frameworks, existing documentation — without trying to read everything at once. It gets the lay of the land.
 
-If you added or removed docs or module folders (other than the example module already removed in step 1), add or remove rows in `agent/index.md` with path and a one-line description. The index is more useful than the raw file structure because descriptions let an agent decide what to open without reading multiple files first.
+### 2. Interview you
 
-### 4. Update references to the project being a template
+The agent will ask about your project. This is a conversation, not a checklist — it follows what's interesting and asks follow-ups.
 
-After setup, **the project is no longer a template**—it is the user's project. Update every place that still describes the repo as a template so agents and humans see this as the project, not "the template."
+**Typical questions:**
+- What is this project? What does it do?
+- Who works on it?
+- What's the current state — active development, maintenance, greenfield?
+- Are there coding standards or conventions the team follows?
+- How should the project be divided into modules?
+- What IDE/agent platform are you using?
+- What parts matter most?
 
-**Files to update:**
+You don't need to explain everything in one sitting. The agent can learn over several sessions.
 
-- **README.md** — Change the title and any prose that says "template" or "this template." Describe the repo as this project (agent context for this project, what's in it, how to use it). Remove or reword "How to use this template" (e.g. "How to use this repo" or fold into overview). Remove instructions that only apply to someone who just copied the template (e.g. "Copy or clone this repo") if they no longer apply; or keep a short "This project was initialized from the agent context template" if useful.
-- **agent/current-state.md** — In "What this project is," replace the template description with a short description of **this** project (what it is, what it's for). Update the table row for README (e.g. "What the project is, what's in agent/, how to use it"). Remove the sentence about "This template includes one example-module/" (example is gone). Keep the rest (where to go next, rules) or adapt to this project.
-- **agent/index.md** — In the Project root table, the README row should say something like "For humans. What the project is, what's in agent/, how to use it" (not "What the template is"). Remove any other template-only wording that remains after step 1.
+### 3. Propose a plan
 
-Do not change intro.md, new.md, or cleanup.md unless the user wants different rules. The goal is that no doc still says "this is a template" or "use this template" after setup.
+Before creating anything, the agent will show you what it plans to generate — module structure, documentation files, configuration. You approve before it proceeds.
 
-### 5. You're done
+### 4. Generate the skeleton
 
-- The project is now the user's project, not a template. Docs refer to it as such.
-- The user can start a chat with intro + a WIP doc, or use new.md to start a WIP/module, or cleanup.md to clean up. system-environment.md describes this project's machine.
+The agent creates initial documentation: a project overview, module-level READMEs, and placeholder context files. Things it doesn't know get marked as `*(to be documented)*` rather than guessed at.
+
+It also creates the IDE-specific entrypoint file so future sessions start automatically.
+
+### 5. Review together
+
+The agent presents what was created and what's still placeholder. You verify accuracy and note what should be filled in during future sessions.
+
+---
+
+## How you can help the agent perform well
+
+The agent is designed to be independent, but it needs your help to get there:
+
+- **Explain the "why" behind things.** Code shows what something does. The agent needs to know *why* it does it that way, what was tried before, and what constraints exist.
+- **Mention standards early.** If you have coding conventions, architecture patterns, or team practices, tell the agent before it starts writing code. It will ask, but volunteering helps.
+- **Correct mistakes immediately.** When the agent gets something wrong, say so. It encodes corrections into memory so it doesn't repeat them.
+- **Don't repeat yourself.** If you've explained something before and the agent asks again, something went wrong with its memory. Let it know — "I already told you this" is useful feedback.
+- **Let it ask questions about high-risk topics.** The agent will be more persistent about things like git workflow, deployment triggers, and permissions. These questions prevent real damage.
+
+---
+
+## Ongoing learning
+
+Setup isn't a one-time event. The agent continues learning through every session:
+
+- **Working conversations** teach it about the project implicitly — every task adds understanding
+- **Conventions** it discovers get remembered for future sessions
+- **Decisions** you explain get recorded so the agent (and future sessions) don't re-try failed approaches
+- **The agent may suggest better approaches** when it knows of them — this is by design, not a bug
+
+If the agent seems like it's not using you effectively — not asking enough questions, not leveraging your knowledge, not understanding context — tell it. It's a tool, and a good tool helps the user use it well.
+
+---
+
+## After setup
+
+- New sessions start automatically through the IDE entrypoint
+- The agent orients itself from memory each session — no re-introduction needed
+- Understanding grows session over session
+- See `agent/architecture.md` if you want to understand why things are structured this way

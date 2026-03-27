@@ -268,12 +268,59 @@ At any point, if a session ends, the documentation reflects reality:
 
 ---
 
+## Memory and artifacts
+
+The agent's knowledge and the things it produces are two separate layers:
+
+- **Memory** (`memory/`) — the agent's knowledge, organized for retrieval. Understanding of the codebase, the project, the user's intentions, decisions, heuristics — everything the agent knows. The agent owns and organizes this. Can be restructured freely without touching anything else.
+- **Artifacts** — everything the agent produces from that knowledge. Code, human documentation, config files, IDE instruction files (like `copilot-instructions.md` or `agent/intro.md`), plan files — anything in the repo that isn't memory.
+
+**The learning process is bidirectional:**
+- **Memory → artifacts:** The agent uses its knowledge to produce and update artifacts.
+- **Artifacts → memory:** The agent learns from the work it does — creating code, reading docs, making decisions, receiving feedback — and encodes that knowledge back into memory.
+
+This separation means the memory tree can be reorganized without touching code, docs, or config. Artifacts follow their own conventions. Growing and restructuring memory doesn't risk breaking anything.
+
+### The memory structure: a navigable graph with tree-like hierarchy
+
+The memory lives in `memory/` at the repo root. It's organized by domain (e.g. devices, networking, workflows), not by memory type. When an agent works on a task, it wants all relevant knowledge for that domain in one place.
+
+**It's a graph, navigated like a tree:**
+- **Folders provide the tree backbone** — hierarchy, depth, position awareness, domain grouping. The agent always knows where it is from the folder path.
+- **Links between files provide the graph** — cross-references connect knowledge across domains. Any file can reference any other file.
+- **Navigation is depth-first** — start at `memory/README.md`, pick the relevant branch, go deeper. Same pattern as the README tree for code modules.
+
+No hard distinction between navigation nodes and content nodes — any file can contain knowledge AND point to other files.
+
+### Memory file format
+
+Markdown with YAML frontmatter. Each memory file includes:
+- `type` — state, heuristic, preference, procedure, decision, or custom
+- `confidence` — high, medium, or low
+- `last-updated` — when the memory was last touched
+
+The body contains the knowledge, why it matters, and optionally when it applies. References to artifacts use relative file paths from the repo root.
+
+### The learning process
+
+Learning is always on. As the agent works, it continuously evaluates what knowledge is worth encoding into memory. Effort scales with importance — a trivial fact gets a quick append, a major insight gets careful integration.
+
+The agent acts dynamically: adding new files, appending to existing ones, consolidating ideas, reorganizing the tree, or letting go of things that aren't important. The tree should get better over time, not just bigger.
+
+The full learning process is detailed in `agent/learning.md` (loaded on demand). The intro file contains a compact pointer so the agent is always aware memory exists.
+
+See `agent/plan-memory-process.md` for the full design history and decisions.
+
+---
+
 ## The `context/` folder
 
 The `context/` folder exists when there's meta-information about a thing that's separate from the thing itself:
 
 - A **codebase** has code + context about the code (index, current state, plans)
 - A **documentation** module's content IS its meta-information — no context/ folder needed
+
+> **Note:** The memory tree (`memory/`) is the long-term home for the agent's accumulated knowledge. The `context/` folder in code modules holds module-specific working state (current-state, index, active plans). The relationship between these two is being refined — see `agent/plan-memory-process.md` for the active design work.
 
 ---
 
@@ -286,9 +333,11 @@ The architecture solves context quality and context selection simultaneously:
 - Documentation written and maintained by the agent itself
 - Context files that always reflect actual reality (including broken states)
 - Clear separation of concerns (each file answers one question)
+- The memory tree — the agent's accumulated knowledge, structured for retrieval quality
 
 **Context selection** is solved by:
 - The README tree — top-down navigation loads only what's relevant
+- The memory tree — domain-organized, depth-first navigable, only relevant memories loaded
 - Compartmentalized documentation — each file is focused and non-redundant
 - Per-module context — the agent only loads the context files for the module it's working on
 - Behavioral/navigation separation — intro.md is short because project details live in the README tree
@@ -296,9 +345,10 @@ The architecture solves context quality and context selection simultaneously:
 
 **Session independence** is solved by:
 - All context lives in files, not in chat history
+- The memory tree persists the agent's knowledge across sessions and devices
 - Plan files are self-contained — a new agent can continue any task
 - Context files always reflect current reality
 - Sessions can be short without losing information
-- Git tracks the history of documentation changes
+- Git tracks the history of documentation and memory changes
 
-The result: an agent can handle context quality and context selection completely autonomously. It doesn't need the user to point it at the right files or tell it what to read. The documentation structure guides it.
+The result: an agent can handle context quality and context selection completely autonomously. It doesn't need the user to point it at the right files or tell it what to read. The documentation structure and memory tree guide it.

@@ -8,7 +8,7 @@ file and continue the work.
 - Module: `agent/` (project-level process layer)
 - Read: `agent/intro.md` (core rules, process loop)
 - Read: `agent/architecture.md` (context quality, context selection, README tree)
-- Read: `agent/context-refinement.md` (doc audit process — will be extended to audit memory)
+- Read: `agent/documentation-refinement.md` (documentation audit process)
 
 ## Problem
 
@@ -206,10 +206,9 @@ This keeps the tree focused and retrieval quality high.
 
 ### Intro file additions
 
-The intro file gets three things:
+The intro file gets two things:
 1. **More "why"** — explain that repos using this template are used from multiple devices that sync via git, sessions have no shared chat history, the repo is the only durable cross-device memory. Motivation helps agents internalize the rule.
-2. **Learning awareness** — the agent should always be evaluating what's worth encoding into memory as it works. This isn't a mode to switch into; it's a background posture. Memory types, the tree at `memory/`, and the principle "read before you write."
-3. **Pointer to `agent/learning.md`** — for the full principles behind the learning process: how to assess importance, how to choose the right action, the bidirectional flow between memory and artifacts, consolidation, abstraction-level guidance. The intro stays concise; the detailed reference loads on demand.
+2. **Learning awareness + pointer to memory** — the agent should always be evaluating what's worth encoding into memory as it works. Point to `memory/root.md` as the entry to the agent's knowledge. The intro stays concise; detailed knowledge lives in memory, not in the intro.
 
 ### Memory refinement (extension of context-refinement)
 
@@ -226,43 +225,47 @@ Categories emerge from usage rather than being designed upfront. The refinement 
 
 ## Open questions
 
-These still need to be worked through:
-
-- **Where exactly do cross-cutting principles live?** In `memory/` (navigated to)? In `agent/` (always-loaded)? The answer affects how the intro file references them and whether they're part of every session's context load.
-- **What happens to the existing `context/` pattern?** The current architecture has `context/current-state.md`, `context/index.md`, `context/plan-*.md` alongside code modules. These were proto-memory — the agent's understanding stored next to code. In the new model, does that understanding move to `memory/`? And specifically: plan files are temporal (tracking active work, not accumulated knowledge) — do they stay alongside code as artifacts, move to memory, or something else?
-- **How does the memory tree interact with sub-agents?** Sub-agents can add memory but shouldn't restructure (per the model capability gate). Do they read memory? Do they get pointed to specific branches?
-- **How does the agent bootstrap?** `agent/intro.md` (or the IDE entrypoint) needs to exist before memory does — it tells the agent the memory tree exists and how to use it. What's the minimal bootstrap that gets an agent into the memory system?
+- **What happens to the existing `context/` pattern?** Deferred — the user wants to address this later when we reorganize the template.
+- **How does the memory tree interact with sub-agents?** Sub-agents can add memory but shouldn't restructure. Details TBD.
 
 ## Plan
 
 ### Phase 1: Build the memory tree and encode the learning process
 
-The learning process itself is the first thing to encode into memory. This plan file is the artifact; the memory tree is where the knowledge lives permanently. Building the tree and encoding the learning process into it is how we test whether the system works.
+- [x] **1a.** Create `memory/root.md` — root entry point
+- [x] **1b.** Encode the learning process and foundational knowledge into memory — 15 memory files covering: two-layer model, structure/format, learning process, observe/plan/act/review, user preferences, team vs individual, two-tier heuristics, heuristic quality, project purpose, resolve-before-asking, leave-things-better, context quality/selection, research foundation, memory-references-not-duplicates, setup guide status
+- [x] **1c.** Review gaps — identified and filled three gaps (what memory IS, structure/format, types), encoded the self-describing insight
 
-- [x] **1a.** Create `memory/root.md` — root entry point for the memory tree
-- [ ] **1b.** Encode the learning process into the memory tree as the first memory entries — this is the system describing itself
-- [ ] **1c.** Review how we did — does the encoded learning process make sense to a fresh agent navigating the tree?
+### Phase 2: Update intro file and bootstrap
 
-### Phase 2: Create the learning process artifact
+`agent/learning.md` dropped — the learning process is foundational and lives in memory. Memory doesn't duplicate well-documented artifacts; creating a separate tool file would duplicate what's already in the tree.
 
-- [ ] **2a.** Write `agent/learning.md` — the artifact version of the learning process, generated from memory. This is the tool file agents load on demand.
-- [ ] **2b.** Update `agent/intro.md` with learning awareness + pointer to `agent/learning.md`
+- [x] **2a.** Decided: intro is a minimal bootstrap — core rules, process reminder, memory pointer. Detailed behavior lives in memory.
+- [x] **2b.** Updated `agent/intro.md` — slimmed to bootstrap, added memory section with pointer to `memory/root.md`, added learning awareness, added "why" about multi-device/git-synced repos
+- [x] **2c.** Created `memory/agent-process-files.md` — lightweight references to existing `agent/` process files (pointers, not duplicates)
 
-### Phase 3: Integrate and refine
+### Phase 3: Integrate and finalize
 
-- [ ] **3a.** Resolve remaining open questions (cross-cutting location, context pattern migration, bootstrap, sub-agents)
-- [ ] **3b.** Update `agent/architecture.md` with memory tree section
-- [ ] **3c.** Update root `README.md` — add `memory/` to project map, add `agent/learning.md` to agent/ table
-- [ ] **3d.** Design memory refinement process
-- [ ] **3e.** Review everything for coherence
+- [x] **3a.** Observe/plan/act/review integration with learning — encoded in `memory/observe-plan-act-review.md`
+- [x] **3b.** Update `agent/architecture.md` with memory tree section
+- [ ] **3c.** Update root `README.md` — add `memory/` to project map
+- [x] **3d.** Design memory refinement process — encoded in `memory/memory-refinement.md`
+- [x] **3e.** Update `agent/setup.md` for the memory system — rewritten with memory integration, data safety, environment discovery, interview process
+- [ ] **3f.** Revisit context/ pattern and module templates
+- [ ] **3g.** Review everything for coherence — does this work when dropped into another project?
 
 ## Progress
 
-Architecture designed. Key decisions: memory/artifacts two-layer model, bidirectional learning process, self-organizing tree, effort scales with importance, model capability scales ambition, forgetting as a feature. Memory file format finalized. Ready to build the memory tree and encode the learning process as the first test of the system.
+Phases 1, 2, and most of 3 complete. Memory tree has 20 files across 7 types. All `agent/` artifacts rewritten as developer-facing (except `intro.md` which is the agent bootstrap). Deleted: `agent/new.md`, `agent/system-environment.md`, `example-module/`. Template is ready for initial use — being exported to real projects.
 
 ## Next steps
 
-Root node created (`memory/root.md`). Next: encode the learning process into the tree as the first memory entries. Then review how a fresh agent would experience navigating it.
+Remaining Phase 3 items for a future session:
+- **3c.** Update root `README.md` — add `memory/` to project map
+- **3f.** Revisit context/ pattern and module templates
+- **3g.** Review everything for coherence — does this work when dropped into another project?
+
+The coherence review (3g) will happen naturally as the template is used in real projects. Issues found during use become memory.
 
 ## Notes
 

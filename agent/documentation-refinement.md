@@ -1,4 +1,4 @@
-# context-refinement.md — audit documentation with parallel sub-agents
+# documentation-refinement.md — audit documentation with parallel sub-agents
 
 Use this process on **any** project that uses markdown documentation and an agentic workflow. It does **not** change folder layout or file names. It produces evidence about whether **wording and explanations** are clear enough for a new session, so you can refine prose in existing files.
 

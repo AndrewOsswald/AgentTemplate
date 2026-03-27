@@ -1,38 +1,41 @@
 # cleanup.md — end-of-session review
 
-When the user asks to clean up, run these steps. Goal: all documentation accurately reflects what happened this session so a fresh agent can continue without chat history.
+When you're done working with the agent for this session, have it run through this checklist. The goal: everything important from this session is captured in files and memory so the next session can pick up without any chat history.
 
 ---
 
-## 1. Review work done this session
+## What the agent will do
 
-List what was changed: code written, config modifications, completed tasks, files created or modified.
+### 1. Review what happened
 
-## 2. Verify context files
+The agent summarizes what was done this session — code written, tasks completed, files changed, decisions made.
 
-For each module touched this session:
+### 2. Update documentation
 
-- **Context files** (e.g. `context/current-state.md`, `context/index.md`, or equivalent per template) — do they accurately reflect the current state? Update if anything changed that wasn't captured during act.
-- **Module README** — does the overview still match reality? Update if capabilities, guides, or current state changed. Do not duplicate context file content — the README is the stable overview.
-- **Guides** — if you ran setup or operational steps, did the guide get updated with corrections, clarifications, or deviations?
-- **Plan files** — is progress accurately tracked? Move items between planned/in-progress/done. Update next steps. Add notes about failures or decisions.
+For each module touched:
+- Are context files accurate? (`current-state.md`, `index.md`, etc.)
+- Does the module README still match reality?
+- Are plan files up to date with progress?
+- Were any guides updated if procedures changed?
 
-## 3. Verify project-level files
+At the project level:
+- Does the root `README.md` still map the project correctly?
 
-- **Root `README.md`** — update if modules were added/removed or the project map changed.
-- **`agent/system-environment.md`** — update if software was installed/removed on the dev machine.
-- **Parent README files** — if you added a sub-module or guide, does the parent's README list it?
+### 3. Encode important knowledge into memory
 
-## 4. Version control
+The agent reviews the session and encodes anything a future session would need:
+- Decisions made and why
+- New conventions or patterns discovered
+- Developer preferences expressed during the session
+- Problems encountered and how they were resolved
+- Anything that would force the developer to repeat themselves if lost
 
-How changes are committed, branched, and pushed depends on the team's git workflow. If git behavior hasn't been discussed yet, ask the user how they'd like end-of-session commits handled — or note that this can be set up in a future session.
+This is the most important step. Everything in chat history disappears when the session ends. Memory is what persists.
 
-Until a git workflow is agreed on, **at minimum** stage and commit locally so work isn't lost. Do not push automatically unless the user has explicitly set that up.
+### 4. Confirm
 
-## 5. Confirm
-
-Tell the user briefly:
-- What modules were touched
+The agent tells you:
+- What was done
 - What documentation was updated
-- Whether a commit was made
+- What was encoded into memory
 - Any remaining work tracked in plan files

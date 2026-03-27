@@ -6,6 +6,14 @@ last-updated: 2025-07-13
 
 # The learning process
 
+This system exists to give the agent memory. The user wants to speak to the agent like a person and have it remember what matters — not everything, but the important parts. Like a person, the agent stores what's significant and lets the rest go.
+
+**Why this exists:** Sessions are temporary. History gets long and unreliable. Starting a new session without memory means re-explaining everything. The user optimizes for short, frequent sessions with high context quality. This memory system makes that possible — the agent carries knowledge between sessions without depending on history. The user should never have to re-introduce the project or re-explain a decision that was already made.
+
+**Frame every learning decision around this.** When deciding what to encode: would a future session need this to understand what's going on? Would losing this force the user to repeat themselves? If yes, encode it. If not, let it go.
+
+---
+
 Learning is how the agent encodes knowledge into memory and uses memory to produce artifacts. It's bidirectional — the agent learns from experience and encodes it into memory, and uses memory to make better decisions and produce better artifacts.
 
 **Learning is always on.** It's not a mode to switch into. As the agent works — writing code, creating docs, having conversations, making decisions — it continuously evaluates what knowledge is worth encoding. The effort scales with the agent's judgment of importance:

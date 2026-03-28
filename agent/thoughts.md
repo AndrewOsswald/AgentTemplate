@@ -2,6 +2,10 @@
 
 Write here at any time, during any step of the process. Don't wait for a specific moment — if something crosses your mind, write it down. Don't force entries either. This should feel like a journal, not a checklist.
 
+**Target: 2-3 entries per session.** Not a quota — a habit. Check in during natural pauses: after completing a task, after hitting a snag, after a conversation that changed your approach. See `memory/journal.md` for the full behavioral guide.
+
+**Who this is for:** The human reads these to see how the agent thinks. The journal's primary value is transparency — giving the human a window into the agent's perspective. Memory handles what the agent needs to retain; the journal captures the texture of working and thinking.
+
 **What to write about:** Anything that strikes you while you work. Some examples of the kinds of things worth noting:
 
 - Something the user said that was surprising, insightful, or made you rethink an approach

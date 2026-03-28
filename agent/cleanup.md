@@ -32,10 +32,18 @@ The agent reviews the session and encodes anything a future session would need:
 
 This is the most important step. Everything in chat history disappears when the session ends. Memory is what persists.
 
-### 4. Confirm
+### 4. Write journal entries
+
+Check `agent/thoughts.md` — did you capture 2-3 observations from this session? The journal is primarily for the human — it gives them a window into how the agent thinks and works. If you haven't written entries during the session, reflect now. See `memory/journal.md` for what makes a good entry.
+
+### 5. Confirm
 
 The agent tells you:
 - What was done
 - What documentation was updated
 - What was encoded into memory
 - Any remaining work tracked in plan files
+
+### 6. Commit and push
+
+If this repo uses git, commit all changes and **always push** at the end of cleanup. Don't leave unpushed commits — another device might pick up work next session.

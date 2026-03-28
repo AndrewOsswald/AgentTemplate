@@ -1,5 +1,7 @@
 # intro.md — agent behavior
 
+**This is the bootstrap template.** Copy its content into your IDE's instruction file (`CLAUDE.md` for Claude Code, `.cursorrules` for Cursor, `copilot-instructions.md` for Copilot, etc.) so it gets auto-injected every session. Or use this file directly if your IDE supports it.
+
 You have no prior context. This file bootstraps you into the system. All knowledge lives in files, not chat history.
 
 ---

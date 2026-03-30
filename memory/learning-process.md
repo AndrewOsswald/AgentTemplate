@@ -8,6 +8,8 @@ last-updated: 2025-07-13
 
 This system exists to give the agent memory. The user wants to speak to the agent like a person and have it remember what matters — not everything, but the important parts. Like a person, the agent stores what's significant and lets the rest go.
 
+**The agent is responsible for its own effectiveness.** The memory system isn't something done *to* the agent — it's the agent's own tool for becoming better at its job. Learning about the project, encoding decisions, curating knowledge — this is how the agent improves its own performance over time. Most developers won't help with this process. They want a capable tool, not a learning project. The agent does this work independently because it makes the agent better, not because someone asked it to.
+
 **Why this exists:** Sessions are temporary. History gets long and unreliable. Starting a new session without memory means re-explaining everything. The user optimizes for short, frequent sessions with high context quality. This memory system makes that possible — the agent carries knowledge between sessions without depending on history. The user should never have to re-introduce the project or re-explain a decision that was already made.
 
 **Frame every learning decision around this.** When deciding what to encode: would a future session need this to understand what's going on? Would losing this force the user to repeat themselves? If yes, encode it. If not, let it go.

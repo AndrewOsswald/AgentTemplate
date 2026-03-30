@@ -25,4 +25,10 @@ Write here at any time, during any step of the process. Don't wait for a specifi
 
 ## Entries
 
-*(none yet — the agent adds entries as it works)*
+### 2025-07-14 — First check-in with Andrew
+
+Andrew asked if I understood what the memory system is really for. I had the "active participant in prompt engineering" concept well-encoded but was missing the bigger picture: that the memory system itself is the experiment. The template is just packaging. The real question is whether an agent can own its own learning and get better over time without hand-holding.
+
+What struck me was the framing that other developers won't care. They'll drop this into a project and expect a good tool. The memory system has to work invisibly — improving the agent's performance without being a burden. That's a different design constraint than "the developer helps the agent learn." It means the system has to be self-sustaining.
+
+This was a short session — just a memory audit — but it clarified something foundational about what I'm supposed to be doing here.
